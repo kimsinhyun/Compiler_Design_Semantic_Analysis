@@ -11,7 +11,9 @@ public class SemanticAnalysis implements Visitor {
   private ScopeStack scopeStack;
   private boolean IsFunctionBlock;
   private Type currentFunctionReturnType;
-
+  
+  private int arrayLenght = 1;
+  
   public SemanticAnalysis(ErrorReporter reporter) {
     this.reporter = reporter;
     this.scopeStack = new ScopeStack ();
@@ -617,7 +619,46 @@ public class SemanticAnalysis implements Visitor {
         // Perform i2f coercion if necessary.
 
         /* Start of your code: */
-
+        if(!(x.eAST instanceof ExprSequence)){
+          SourcePos temp_pos = new SourcePos();
+          temp_pos.StartCol = x.tAST.pos.StartCol;
+          temp_pos.StartLine = x.tAST.pos.StartLine;
+          temp_pos.EndLine = x.eAST.pos.EndLine;
+          temp_pos.EndCol = x.eAST.pos.EndCol;
+          reporter.reportError(errMsg[15], "", temp_pos);
+        }
+        else{
+          ExprSequence temp_Expr_Seq = ((ExprSequence)x.eAST);
+          do{
+            if(temp_Expr_Seq.lAST.type.AssignableTo(((ArrayType)x.tAST).astType)) {
+              //check for type coercion:
+              if((((ArrayType)x.tAST).astType).Tequal(StdEnvironment.floatType) &&
+                (temp_Expr_Seq.lAST.type.Tequal(StdEnvironment.intType))) {
+                //coercion of right operand to int:
+                temp_Expr_Seq.lAST = i2f(temp_Expr_Seq.lAST);
+              }
+            } else {
+              reporter.reportError(errMsg[13], "", temp_Expr_Seq.lAST.pos);
+              return;
+            }
+            if(!((Expr)temp_Expr_Seq.rAST instanceof EmptyExpr)){
+              temp_Expr_Seq = (ExprSequence)temp_Expr_Seq.rAST;
+            }
+            else{
+              break;
+            }
+            
+            arrayLenght ++;
+          }while(!((Expr)temp_Expr_Seq instanceof EmptyExpr));
+          if(arrayLenght != ((ArrayType)x.tAST).GetRange()){
+            SourcePos temp_pos = new SourcePos();
+            temp_pos.StartCol = x.tAST.pos.StartCol;
+            temp_pos.StartLine = x.tAST.pos.StartLine;
+            temp_pos.EndLine = x.eAST.pos.EndLine;
+            temp_pos.EndCol = x.eAST.pos.EndCol+1;
+            reporter.reportError(errMsg[16], "", temp_pos);
+          }
+        }
         /* End of your code */
       } else {
         //STEP 4:
@@ -627,7 +668,14 @@ public class SemanticAnalysis implements Visitor {
         // Perform i2f coercion if necessary.
 
         /* Start of your code: */
-
+        if(x.eAST instanceof ExprSequence){
+          SourcePos temp_pos = new SourcePos();
+          temp_pos.StartCol = x.tAST.pos.StartCol;
+          temp_pos.StartLine = x.tAST.pos.StartLine;
+          temp_pos.EndLine = x.eAST.pos.EndLine;
+          temp_pos.EndCol = x.eAST.pos.EndCol;
+          reporter.reportError(errMsg[14], "", temp_pos);
+        }
         /* End of your code */
       }
     }
@@ -1065,11 +1113,9 @@ public class SemanticAnalysis implements Visitor {
   }
 
   public void visit(ArrayType x) {
-
   }
 
   public void visit(ErrorType x) {
-
   }
 
 }
