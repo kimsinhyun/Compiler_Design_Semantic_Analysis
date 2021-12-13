@@ -675,6 +675,11 @@ public class SemanticAnalysis implements Visitor {
           temp_pos.EndLine = x.eAST.pos.EndLine;
           temp_pos.EndCol = x.eAST.pos.EndCol;
           reporter.reportError(errMsg[14], "", temp_pos);
+          return;
+        }
+        else if(!x.eAST.type.AssignableTo(x.tAST)) {
+          reporter.reportError(errMsg[6], "", x.eAST.pos);
+          return;
         }
         /* End of your code */
       }

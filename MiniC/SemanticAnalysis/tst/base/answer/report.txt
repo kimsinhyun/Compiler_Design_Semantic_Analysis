@@ -1,5 +1,5 @@
 SemanticAnalysis Test Report
-generated Sat Dec 11 02:13:42 KST 2021
+generated Tue Dec 14 00:18:07 KST 2021
 c10.mc succeeded
 c11.mc succeeded
 c12.mc succeeded
@@ -38,7 +38,7 @@ c30.2.mc succeeded
 c30.3.mc succeeded
 c30.4.mc succeeded
 c30.5.mc succeeded
-c30.mc failed
+c30.mc succeeded
 c3.1.mc succeeded
 c31.mc succeeded
 c3.2.mc succeeded
